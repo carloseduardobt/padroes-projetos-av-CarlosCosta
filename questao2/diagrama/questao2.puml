@@ -1,0 +1,97 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "Observer - comunicacao de lances" as ObserverPackage {
+  interface LotObserver as LotObserverAPI <<Observer>> {
+    +onBidAccepted(lot, bid)
+    +shouldReceive(bid): boolean
+  }
+  class Lot as LotSubject <<Subject>>
+  class Participant as ParticipantObserver <<Concrete Observer>>
+  class AuctioneerPanel as AuctioneerPanelObserver <<Concrete Observer>>
+  class AuctionAuditor as AuctionAuditorObserver <<Concrete Observer>>
+  class Money as AuctionMoneyUtility <<Utility>>
+  class Bid as BidEntity
+  interface Bidder as BidderAPI
+
+  LotSubject "1" o-- "0..*" LotObserverAPI : observadores
+  LotObserverAPI <|.. ParticipantObserver
+  LotObserverAPI <|.. AuctioneerPanelObserver
+  LotObserverAPI <|.. AuctionAuditorObserver
+  LotSubject --> BidEntity : registra
+  BidEntity --> BidderAPI : autor
+  BidderAPI <|.. ParticipantObserver
+  ParticipantObserver --> LotSubject : acompanha / oferta lance
+  AuctionAuditorObserver --> BidEntity : audita
+}
+
+package "Strategy - comissao do vendedor" as StrategyPackage {
+  interface CommissionStrategy as CommissionStrategyAPI <<Strategy>> {
+    +calculate(saleValue): BigDecimal
+  }
+  class ArtCommission <<Concrete Strategy>>
+  class VehicleCommission <<Concrete Strategy>>
+  class RealEstateCommission <<Concrete Strategy>>
+  class ElectronicsCommission <<Concrete Strategy>>
+  CommissionStrategyAPI <|.. ArtCommission
+  CommissionStrategyAPI <|.. VehicleCommission
+  CommissionStrategyAPI <|.. RealEstateCommission
+  CommissionStrategyAPI <|.. ElectronicsCommission
+}
+
+package "Decorator - servicos da fatura" as DecoratorPackage {
+  interface InvoiceComponent as InvoiceComponentAPI <<Component>> {
+    +getLotName(): String
+    +getSaleValue(): BigDecimal
+    +getLines(): List
+    +getTotal(): BigDecimal
+  }
+  class BaseInvoice <<Concrete Component>>
+  class InvoiceLine
+  abstract class AdditionalServiceDecorator as AdditionalServiceDecoratorBase <<Decorator>>
+  class TransportInsuranceDecorator <<Concrete Decorator>>
+  class AuthenticityCertificateDecorator <<Concrete Decorator>>
+  class SpecialPackagingDecorator <<Concrete Decorator>>
+  class ExpressDeliveryDecorator <<Concrete Decorator>>
+
+  InvoiceComponentAPI <|.. BaseInvoice
+  InvoiceComponentAPI <|.. AdditionalServiceDecoratorBase
+  InvoiceComponentAPI --> "0..*" InvoiceLine : linhas
+  AdditionalServiceDecoratorBase <|-- TransportInsuranceDecorator
+  AdditionalServiceDecoratorBase <|-- AuthenticityCertificateDecorator
+  AdditionalServiceDecoratorBase <|-- SpecialPackagingDecorator
+  AdditionalServiceDecoratorBase <|-- ExpressDeliveryDecorator
+  AdditionalServiceDecoratorBase o--> InvoiceComponentAPI : envolve
+}
+
+class AuctionResult
+class SellerSettlement
+class InvoicePrinter
+class Main
+
+LotSubject --> CommissionStrategyAPI : estrategia vigente / trocavel
+LotSubject --> AuctionResult : encerra em
+AuctionResult --> BidderAPI : vencedor
+SellerSettlement ..> AuctionResult
+SellerSettlement ..> AuctionMoneyUtility
+InvoicePrinter ..> InvoiceComponentAPI : imprime sem conhecer servicos
+InvoicePrinter ..> AuctionMoneyUtility
+Main ..> LotSubject
+Main ..> CommissionStrategyAPI
+Main ..> InvoiceComponentAPI
+
+note bottom of LotSubject
+  O Subject conhece apenas LotObserver e Bidder.
+  A exclusao do autor do lance e decidida
+  pelo proprio observador via shouldReceive.
+end note
+note right of CommissionStrategyAPI
+  A estrategia pode ser substituida
+  no lote antes do encerramento.
+end note
+note bottom of AdditionalServiceDecoratorBase
+  Decorators podem ser empilhados em qualquer
+  ordem e repetidos sem classes de combinacao.
+end note
+@enduml
