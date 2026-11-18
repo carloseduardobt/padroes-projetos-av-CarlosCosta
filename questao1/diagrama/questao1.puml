@@ -1,0 +1,93 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+class Main <<Client>>
+class Provider <<Value Object>>
+class ProviderFactorySelector <<Factory Selector>> {
+  +select(provider): CloudResourceFactory
+}
+interface CloudResourceFactory <<Abstract Factory>> {
+  +getProvider(): Provider
+  +createVirtualMachine(): VirtualMachine
+  +createObjectStorage(gb): ObjectStorage
+  +createMessageQueue(): MessageQueue
+}
+class AwsResourceFactory <<Concrete Factory>>
+class AzureResourceFactory <<Concrete Factory>>
+interface VirtualMachine <<Abstract Product>> {
+  +getProvider(): Provider
+}
+interface ObjectStorage <<Abstract Product>> {
+  +getProvider(): Provider
+}
+interface MessageQueue <<Abstract Product>> {
+  +getProvider(): Provider
+}
+class AwsVirtualMachine <<Concrete Product>>
+class AwsObjectStorage <<Concrete Product>>
+class AwsMessageQueue <<Concrete Product>>
+class AzureVirtualMachine <<Concrete Product>>
+class AzureObjectStorage <<Concrete Product>>
+class AzureMessageQueue <<Concrete Product>>
+class EnvironmentProvisioner <<Director / Client>>
+class ProvisioningRequest
+class Environment
+class AppConfig <<Singleton>> {
+  -INSTANCE: AppConfig
+  -AppConfig()
+  +getInstance(): AppConfig
+}
+class AuditLog <<Thread-safe Singleton>> {
+  -INSTANCE: AuditLog
+  -AuditLog()
+  +getInstance(): AuditLog
+  +register(...)
+}
+class AuditRecord
+class Money <<Utility>>
+
+Main --> ProviderFactorySelector : escolhe provedor
+ProvisioningRequest --> Provider
+ProviderFactorySelector ..> AwsResourceFactory : instancia / cacheia
+ProviderFactorySelector ..> AzureResourceFactory : instancia / cacheia
+CloudResourceFactory <|.. AwsResourceFactory
+CloudResourceFactory <|.. AzureResourceFactory
+VirtualMachine <|.. AwsVirtualMachine
+ObjectStorage <|.. AwsObjectStorage
+MessageQueue <|.. AwsMessageQueue
+VirtualMachine <|.. AzureVirtualMachine
+ObjectStorage <|.. AzureObjectStorage
+MessageQueue <|.. AzureMessageQueue
+AwsResourceFactory ..> AwsVirtualMachine : cria
+AwsResourceFactory ..> AwsObjectStorage : cria
+AwsResourceFactory ..> AwsMessageQueue : cria
+AzureResourceFactory ..> AzureVirtualMachine : cria
+AzureResourceFactory ..> AzureObjectStorage : cria
+AzureResourceFactory ..> AzureMessageQueue : cria
+EnvironmentProvisioner --> CloudResourceFactory : recebe uma fabrica
+EnvironmentProvisioner --> ProvisioningRequest
+EnvironmentProvisioner ..> Environment : monta
+EnvironmentProvisioner ..> AppConfig : consulta orcamento
+Environment ..> AppConfig : consulta regiao
+EnvironmentProvisioner ..> AuditLog : registra resultado
+Environment ..> Money : formata custo
+Environment o-- VirtualMachine
+Environment o-- ObjectStorage
+Environment o-- MessageQueue
+AuditLog o-- AuditRecord
+
+note right of CloudResourceFactory
+  Abstract Factory garante que os tres
+  recursos pertencem a mesma familia
+  (AWS ou Azure).
+end note
+note bottom of AppConfig
+  Singleton: config.properties e lido
+  uma unica vez na inicializacao.
+end note
+note bottom of AuditLog
+  Singleton + metodos sincronizados:
+  sequencia e historico seguros em threads.
+end note
+@enduml
