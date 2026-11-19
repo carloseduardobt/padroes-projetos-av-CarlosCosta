@@ -1,0 +1,74 @@
+digraph Q2 {
+      graph [rankdir=LR, bgcolor="white", pad="0.35", nodesep="0.28", ranksep="0.75", splines=polyline,
+             fontname="Arial", fontsize=22, labelloc="t", label="QUESTÃO 2 — CASA DE LEILÕES ONLINE\nDiagrama de classes UML | Observer + Strategy + Decorator", labeljust="l", outputorder="edgesfirst"];
+      node [shape=plain, fontname="Arial"];
+      edge [fontname="Arial", fontsize=9, color="#526579", arrowsize=0.8];
+    
+subgraph cluster_observer { label="OBSERVER — COMUNICAÇÃO DE LANCES"; labelloc="t"; color="#8fc6aa"; style="rounded"; fontname="Arial"; fontsize=13;
+Lot [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dcfce7" ALIGN="CENTER" CELLPADDING="7"><B>Lot</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Subject»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- name: String<BR ALIGN="LEFT"/>- category: String<BR ALIGN="LEFT"/>- startingPrice: BigDecimal<BR ALIGN="LEFT"/>- reservePrice: BigDecimal<BR ALIGN="LEFT"/>- currentBid: BigDecimal<BR ALIGN="LEFT"/>- closed: boolean<BR ALIGN="LEFT"/>- observers: List&lt;LotObserver&gt;<BR ALIGN="LEFT"/>- bids: List&lt;Bid&gt; <BR ALIGN="LEFT"/> + addObserver(observer): void<BR ALIGN="LEFT"/>+ removeObserver(observer): void<BR ALIGN="LEFT"/>+ placeBid(bidder, amount): boolean<BR ALIGN="LEFT"/>+ changeCommissionStrategy(strategy): void<BR ALIGN="LEFT"/>+ close(): AuctionResult</FONT></TD></TR></TABLE>>];
+LotObserver [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dcfce7" ALIGN="CENTER" CELLPADDING="7"><I>LotObserver</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Observer»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ shouldReceive(bid): boolean<BR ALIGN="LEFT"/>+ onBidAccepted(lot, bid): void</FONT></TD></TR></TABLE>>];
+Participant [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ecfdf5" ALIGN="CENTER" CELLPADDING="7"><B>Participant</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Observer + Bidder»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String<BR ALIGN="LEFT"/>- name: String <BR ALIGN="LEFT"/> + follow(lot): void<BR ALIGN="LEFT"/>+ unfollow(lot): void<BR ALIGN="LEFT"/>+ placeBid(lot, amount): boolean<BR ALIGN="LEFT"/>+ onBidAccepted(lot, bid): void</FONT></TD></TR></TABLE>>];
+AuctioneerPanel [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ecfdf5" ALIGN="CENTER" CELLPADDING="7"><B>AuctioneerPanel</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Observer»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- panelName: String <BR ALIGN="LEFT"/> + onBidAccepted(lot, bid): void</FONT></TD></TR></TABLE>>];
+AuctionAuditor [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ecfdf5" ALIGN="CENTER" CELLPADDING="7"><B>AuctionAuditor</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Observer»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- records: List&lt;String&gt; <BR ALIGN="LEFT"/> + onBidAccepted(lot, bid): void<BR ALIGN="LEFT"/>+ printHistory(): void</FONT></TD></TR></TABLE>>];
+Bidder [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f0fdf4" ALIGN="CENTER" CELLPADDING="7"><I>Bidder</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Role Interface»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getName(): String</FONT></TD></TR></TABLE>>];
+Bid [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f0fdf4" ALIGN="CENTER" CELLPADDING="7"><B>Bid</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Entity»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- bidder: Bidder<BR ALIGN="LEFT"/>- amount: BigDecimal<BR ALIGN="LEFT"/>- timestamp: LocalDateTime <BR ALIGN="LEFT"/> + getters()</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_strategy { label="STRATEGY — COMISSÃO DO VENDEDOR"; labelloc="t"; color="#9bb7df"; style="rounded"; fontname="Arial"; fontsize=13;
+CommissionStrategy [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dbeafe" ALIGN="CENTER" CELLPADDING="7"><I>CommissionStrategy</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Strategy»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ calculate(saleValue): BigDecimal<BR ALIGN="LEFT"/>+ getName(): String</FONT></TD></TR></TABLE>>];
+ArtCommission [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>ArtCommission</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Strategy»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- RATE: 20% <BR ALIGN="LEFT"/> + calculate(value): BigDecimal</FONT></TD></TR></TABLE>>];
+VehicleCommission [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>VehicleCommission</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Strategy»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- RATE: 8%<BR ALIGN="LEFT"/>- MAXIMUM: R$ 5.000 <BR ALIGN="LEFT"/> + calculate(value): BigDecimal</FONT></TD></TR></TABLE>>];
+RealEstateCommission [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>RealEstateCommission</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Strategy»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- RATE: 3%<BR ALIGN="LEFT"/>- FIXED_FEE: R$ 1.500 <BR ALIGN="LEFT"/> + calculate(value): BigDecimal</FONT></TD></TR></TABLE>>];
+ElectronicsCommission [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>ElectronicsCommission</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Strategy»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- RATE: 12%<BR ALIGN="LEFT"/>- MINIMUM: R$ 50 <BR ALIGN="LEFT"/> + calculate(value): BigDecimal</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_decorator { label="DECORATOR — SERVIÇOS ADICIONAIS DA FATURA"; labelloc="t"; color="#c3a7df"; style="rounded"; fontname="Arial"; fontsize=13;
+InvoiceComponent [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f3e8ff" ALIGN="CENTER" CELLPADDING="7"><I>InvoiceComponent</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Component»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getLotName(): String<BR ALIGN="LEFT"/>+ getSaleValue(): BigDecimal<BR ALIGN="LEFT"/>+ getLines(): List&lt;InvoiceLine&gt;<BR ALIGN="LEFT"/>+ getTotal(): BigDecimal</FONT></TD></TR></TABLE>>];
+BaseInvoice [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>BaseInvoice</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Component»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- lotName: String<BR ALIGN="LEFT"/>- saleValue: BigDecimal <BR ALIGN="LEFT"/> + getLines(): List&lt;InvoiceLine&gt;<BR ALIGN="LEFT"/>+ getTotal(): BigDecimal</FONT></TD></TR></TABLE>>];
+AdditionalServiceDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ede9fe" ALIGN="CENTER" CELLPADDING="7"><I>AdditionalServiceDecorator</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Decorator»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- wrapped: InvoiceComponent <BR ALIGN="LEFT"/> #protected serviceDescription(): String<BR ALIGN="LEFT"/>#protected serviceCost(): BigDecimal<BR ALIGN="LEFT"/>+ delegates component methods</FONT></TD></TR></TABLE>>];
+TransportInsuranceDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>TransportInsuranceDecorator</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Decorator»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- RATE: 1,5% <BR ALIGN="LEFT"/> + serviceCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+AuthenticityCertificateDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>AuthenticityCertificateDecorator</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Decorator»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- COST: R$ 300 <BR ALIGN="LEFT"/> + serviceCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+SpecialPackagingDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>SpecialPackagingDecorator</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Decorator»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- COST: R$ 180 <BR ALIGN="LEFT"/> + serviceCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+ExpressDeliveryDecorator [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>ExpressDeliveryDecorator</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Decorator»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- COST: R$ 450 <BR ALIGN="LEFT"/> + serviceCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+InvoiceLine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>InvoiceLine</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Value Object»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- description: String<BR ALIGN="LEFT"/>- amount: BigDecimal <BR ALIGN="LEFT"/> + getDescription(): String<BR ALIGN="LEFT"/>+ getAmount(): BigDecimal</FONT></TD></TR></TABLE>>];
+InvoicePrinter [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#faf5ff" ALIGN="CENTER" CELLPADDING="7"><B>InvoicePrinter</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Client / Printer»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ print(invoice): void</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_domain { label="RESULTADO DO LEILÃO E ACERTO"; labelloc="t"; color="#e0b77a"; style="rounded"; fontname="Arial"; fontsize=13;
+AuctionResult [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fef3c7" ALIGN="CENTER" CELLPADDING="7"><B>AuctionResult</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Result Entity»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- sold: boolean<BR ALIGN="LEFT"/>- saleValue: BigDecimal<BR ALIGN="LEFT"/>- winner: Bidder<BR ALIGN="LEFT"/>- commission: BigDecimal <BR ALIGN="LEFT"/> + isSold(): boolean<BR ALIGN="LEFT"/>+ getSellerNetValue(): BigDecimal</FONT></TD></TR></TABLE>>];
+SellerSettlement [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>SellerSettlement</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Client / Report»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ print(result): void</FONT></TD></TR></TABLE>>];
+Main [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>Main</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Client»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ main(args): void</FONT></TD></TR></TABLE>>];
+Money [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>Money</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Utility»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ format(value): String</FONT></TD></TR></TABLE>>];
+}
+
+      Lot -> LotObserver [dir=both, arrowtail=odiamond, arrowhead=none, label="0..* observadores"];
+      Participant -> LotObserver [arrowhead=empty, style=dashed, label="implementa"];
+      AuctioneerPanel -> LotObserver [arrowhead=empty, style=dashed];
+      AuctionAuditor -> LotObserver [arrowhead=empty, style=dashed];
+      Participant -> Bidder [arrowhead=empty, style=dashed, label="implementa"];
+      Participant -> Lot [label="segue / oferece lance"];
+      Lot -> Bid [dir=both, arrowtail=odiamond, arrowhead=none, label="0..* lances"];
+      Bid -> Bidder [label="autor do lance"];
+      Lot -> CommissionStrategy [label="estratégia vigente; substituível"];
+      ArtCommission -> CommissionStrategy [arrowhead=empty, style=dashed];
+      VehicleCommission -> CommissionStrategy [arrowhead=empty, style=dashed];
+      RealEstateCommission -> CommissionStrategy [arrowhead=empty, style=dashed];
+      ElectronicsCommission -> CommissionStrategy [arrowhead=empty, style=dashed];
+      Lot -> AuctionResult [label="close() produz"];
+      AuctionResult -> Bidder [label="vencedor (se vendido)"];
+      SellerSettlement -> AuctionResult [label="gera acerto"];
+      BaseInvoice -> InvoiceComponent [arrowhead=empty, style=dashed];
+      AdditionalServiceDecorator -> InvoiceComponent [arrowhead=empty, style=dashed];
+      TransportInsuranceDecorator -> AdditionalServiceDecorator [arrowhead=empty];
+      AuthenticityCertificateDecorator -> AdditionalServiceDecorator [arrowhead=empty];
+      SpecialPackagingDecorator -> AdditionalServiceDecorator [arrowhead=empty];
+      ExpressDeliveryDecorator -> AdditionalServiceDecorator [arrowhead=empty];
+      AdditionalServiceDecorator -> InvoiceComponent [dir=forward, arrowhead=vee, label="envolve 1 componente"];
+      InvoiceComponent -> InvoiceLine [label="0..* linhas"];
+      InvoicePrinter -> InvoiceComponent [label="imprime polimorficamente"];
+      Main -> Lot;
+      Main -> CommissionStrategy;
+      Main -> InvoiceComponent;
+      InvoicePrinter -> Money;
+      SellerSettlement -> Money;
+      note [shape=note, style=filled, fillcolor="#f8fafc", color="#94a3b8", label="Observer: Lot conhece apenas a interface LotObserver; interessados podem entrar/sair sem alterar Lot.\nStrategy: a comissão é trocada no próprio lote antes do encerramento, sem if/switch por categoria.\nDecorator: serviços são empilhados em qualquer ordem e repetidos; InvoicePrinter conhece apenas InvoiceComponent.\nAs três funcionalidades são independentes entre si.", fontsize=9, fontname="Arial"];
+      Lot -> note [style=invis];
+    }
+    
