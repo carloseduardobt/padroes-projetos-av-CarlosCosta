@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Executar Questao 1 - Provisionamento",
+      "request": "launch",
+      "mainClass": "questao1.Main",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "java",
+      "name": "Executar Questao 2 - Leilao",
+      "request": "launch",
+      "mainClass": "questao2.Main",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

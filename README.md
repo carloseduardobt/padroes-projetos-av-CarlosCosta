@@ -12,7 +12,7 @@ Implementacao em Java usando somente a biblioteca padrao, organizada conforme o 
 **Padroes aplicados**
 
 - **Abstract Factory:** `CloudResourceFactory` define a familia de recursos (maquina virtual, armazenamento e fila). `AwsResourceFactory` e `AzureResourceFactory` criam familias coerentes, impedindo mistura de provedores no montador.
-- **Singleton - configuracao:** `AppConfig` carrega `questao1/config.properties` uma unica vez. Para executar, entre na pasta `questao1`, de modo que o arquivo seja encontrado no diretorio de trabalho.
+- **Singleton - configuracao:** `AppConfig` carrega `config.properties` uma unica vez. O carregador procura o arquivo na pasta atual e, se a execucao partir da raiz do repositorio, em `questao1/config.properties`.
 - **Singleton thread-safe - auditoria:** `AuditLog` e unico e sincroniza a inclusao/copia do historico. Cada registro recebe sequencia durante a mesma secao critica, sem sobrescrita entre threads.
 - **Selecao de provedor:** `ProviderFactorySelector` e o unico componente que conhece as fabricas concretas; `Provider` e um objeto de valor extensivel, nao um enum que precisaria ser alterado para cadastrar outro nome de provedor. `EnvironmentProvisioner` recebe uma `CloudResourceFactory` e nao usa `if`/`switch` para decidir provedor. As interfaces dos tres produtos identificam o provedor, e `Environment` rejeita explicitamente uma familia misturada. A regiao e consultada diretamente por `Environment` no Singleton de configuracao.
 
@@ -20,23 +20,26 @@ Os custos sao calculados antes de criar recursos. Uma solicitacao acima do limit
 
 ### Executar
 
-No Windows (PowerShell), dentro de `questao1`:
+Abra a raiz do repositorio no VS Code. O arquivo `.vscode/settings.json` ja configura `questao1/src` e `questao2/src` como pastas de codigo-fonte; o `.vscode/launch.json` disponibiliza as duas configuracoes de execucao.
+
+No Windows (PowerShell), a partir da raiz do repositorio:
 
 ```powershell
-New-Item -ItemType Directory -Force out | Out-Null
-javac -d out (Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName })
-java -cp out questao1.Main
+New-Item -ItemType Directory -Force .\out\q1 | Out-Null
+$files = Get-ChildItem -Path .\questao1\src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+javac -encoding UTF-8 -d .\out\q1 $files
+java -cp .\out\q1 questao1.Main
 ```
 
-No Linux/macOS, dentro de `questao1`:
+No Linux/macOS, a partir da raiz do repositorio:
 
 ```bash
-mkdir -p out
-javac -d out $(find src -name '*.java')
-java -cp out questao1.Main
+mkdir -p out/q1
+javac -encoding UTF-8 -d out/q1 $(find questao1/src -name '*.java')
+java -cp out/q1 questao1.Main
 ```
 
-Edite `questao1/config.properties` para alterar a regiao e o orcamento. A leitura ocorre uma unica vez por execucao.
+O arquivo `questao1/config.properties` define a regiao e o orcamento. A leitura ocorre uma unica vez por execucao.
 
 ## Questao 2 - Casa de Leiloes Online
 
@@ -50,20 +53,21 @@ As tres funcionalidades ficam em pacotes separados (`observer`, `strategy` e `in
 
 ### Executar
 
-No Windows (PowerShell), dentro de `questao2`:
+No Windows (PowerShell), a partir da raiz do repositorio:
 
 ```powershell
-New-Item -ItemType Directory -Force out | Out-Null
-javac -d out (Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName })
-java -cp out questao2.Main
+New-Item -ItemType Directory -Force .\out\q2 | Out-Null
+$files = Get-ChildItem -Path .\questao2\src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+javac -encoding UTF-8 -d .\out\q2 $files
+java -cp .\out\q2 questao2.Main
 ```
 
-No Linux/macOS, dentro de `questao2`:
+No Linux/macOS, a partir da raiz do repositorio:
 
 ```bash
-mkdir -p out
-javac -d out $(find src -name '*.java')
-java -cp out questao2.Main
+mkdir -p out/q2
+javac -encoding UTF-8 -d out/q2 $(find questao2/src -name '*.java')
+java -cp out/q2 questao2.Main
 ```
 
 ## Estrutura

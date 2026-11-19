@@ -16,7 +16,11 @@ public final class AppConfig {
 
     private AppConfig() {
         Properties properties = new Properties();
+        // Permite executar tanto a partir da raiz do repositorio quanto de questao1/.
         Path configPath = Path.of("config.properties");
+        if (!Files.isRegularFile(configPath)) {
+            configPath = Path.of("questao1", "config.properties");
+        }
         try (InputStream input = Files.newInputStream(configPath)) {
             properties.load(input);
         } catch (IOException exception) {
