@@ -1,0 +1,76 @@
+digraph Q1 {
+      graph [rankdir=LR, bgcolor="white", pad="0.35", nodesep="0.28", ranksep="0.65", splines=polyline,
+             fontname="Arial", fontsize=22, labelloc="t", label="QUESTÃO 1 — PROVISIONAMENTO MULTINUVEM\nDiagrama de classes UML | Abstract Factory + Singleton", labeljust="l", outputorder="edgesfirst"];
+      node [shape=plain, fontname="Arial"];
+      edge [fontname="Arial", fontsize=9, color="#526579", arrowsize=0.8];
+    
+subgraph cluster_app { label="APLICAÇÃO E PROVISIONAMENTO"; labelloc="t"; color="#9bb7df"; style="rounded"; fontname="Arial"; fontsize=13;
+Main [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dbeafe" ALIGN="CENTER" CELLPADDING="7"><B>Main</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Client»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- args: String[] <BR ALIGN="LEFT"/> + main(args): void</FONT></TD></TR></TABLE>>];
+ProvisioningRequest [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>ProvisioningRequest</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Request DTO»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- environmentName: String<BR ALIGN="LEFT"/>- provider: Provider<BR ALIGN="LEFT"/>- virtualMachineCount: int<BR ALIGN="LEFT"/>- storageGb: long <BR ALIGN="LEFT"/> + getters()</FONT></TD></TR></TABLE>>];
+ProviderFactorySelector [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dbeafe" ALIGN="CENTER" CELLPADDING="7"><B>ProviderFactorySelector</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Factory Selector»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- FACTORIES: Map&lt;String, CloudResourceFactory&gt; <BR ALIGN="LEFT"/> + select(provider): CloudResourceFactory</FONT></TD></TR></TABLE>>];
+EnvironmentProvisioner [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dbeafe" ALIGN="CENTER" CELLPADDING="7"><B>EnvironmentProvisioner</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Director / Client»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- factory: CloudResourceFactory <BR ALIGN="LEFT"/> + provision(request): Environment<BR ALIGN="LEFT"/>- estimateCost(request): BigDecimal</FONT></TD></TR></TABLE>>];
+Environment [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>Environment</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Aggregate / Result»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- name: String<BR ALIGN="LEFT"/>- provider: Provider<BR ALIGN="LEFT"/>- virtualMachines: List&lt;VirtualMachine&gt;<BR ALIGN="LEFT"/>- storage: ObjectStorage<BR ALIGN="LEFT"/>- queue: MessageQueue <BR ALIGN="LEFT"/> + getMonthlyEstimatedCost(): BigDecimal<BR ALIGN="LEFT"/>+ printSummary(): void</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_factory { label="ABSTRACT FACTORY — FAMÍLIAS DE RECURSOS"; labelloc="t"; color="#8fc6aa"; style="rounded"; fontname="Arial"; fontsize=13;
+CloudResourceFactory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#dcfce7" ALIGN="CENTER" CELLPADDING="7"><I>CloudResourceFactory</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Abstract Factory»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getProvider(): Provider<BR ALIGN="LEFT"/>+ createVirtualMachine(): VirtualMachine<BR ALIGN="LEFT"/>+ createObjectStorage(gb): ObjectStorage<BR ALIGN="LEFT"/>+ createMessageQueue(): MessageQueue</FONT></TD></TR></TABLE>>];
+AwsResourceFactory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ecfdf5" ALIGN="CENTER" CELLPADDING="7"><B>AwsResourceFactory</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Factory»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- sequências atômicas por recurso <BR ALIGN="LEFT"/> + cria família AWS</FONT></TD></TR></TABLE>>];
+AzureResourceFactory [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#ecfdf5" ALIGN="CENTER" CELLPADDING="7"><B>AzureResourceFactory</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Factory»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- sequências atômicas por recurso <BR ALIGN="LEFT"/> + cria família Azure</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_products { label="PRODUTOS ABSTRATOS E IMPLEMENTAÇÕES CONCRETAS"; labelloc="t"; color="#c3a7df"; style="rounded"; fontname="Arial"; fontsize=13;
+VirtualMachine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f3e8ff" ALIGN="CENTER" CELLPADDING="7"><I>VirtualMachine</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Abstract Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getProvider(): Provider<BR ALIGN="LEFT"/>+ getId(): String<BR ALIGN="LEFT"/>+ getHourlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+ObjectStorage [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f3e8ff" ALIGN="CENTER" CELLPADDING="7"><I>ObjectStorage</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Abstract Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getProvider(): Provider<BR ALIGN="LEFT"/>+ getId(): String<BR ALIGN="LEFT"/>+ getSizeGb(): long<BR ALIGN="LEFT"/>+ getMonthlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+MessageQueue [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#f3e8ff" ALIGN="CENTER" CELLPADDING="7"><I>MessageQueue</I><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Abstract Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ getProvider(): Provider<BR ALIGN="LEFT"/>+ getId(): String<BR ALIGN="LEFT"/>+ getFixedMonthlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+AwsVirtualMachine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fff7ed" ALIGN="CENTER" CELLPADDING="7"><B>AwsVirtualMachine</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String <BR ALIGN="LEFT"/> + getHourlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+AwsObjectStorage [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fff7ed" ALIGN="CENTER" CELLPADDING="7"><B>AwsObjectStorage</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String<BR ALIGN="LEFT"/>- sizeGb: long <BR ALIGN="LEFT"/> + getCostPerGbMonthly(): BigDecimal</FONT></TD></TR></TABLE>>];
+AwsMessageQueue [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fff7ed" ALIGN="CENTER" CELLPADDING="7"><B>AwsMessageQueue</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String <BR ALIGN="LEFT"/> + getFixedMonthlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+AzureVirtualMachine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>AzureVirtualMachine</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String <BR ALIGN="LEFT"/> + getHourlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+AzureObjectStorage [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>AzureObjectStorage</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String<BR ALIGN="LEFT"/>- sizeGb: long <BR ALIGN="LEFT"/> + getCostPerGbMonthly(): BigDecimal</FONT></TD></TR></TABLE>>];
+AzureMessageQueue [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#eff6ff" ALIGN="CENTER" CELLPADDING="7"><B>AzureMessageQueue</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Concrete Product»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- id: String <BR ALIGN="LEFT"/> + getFixedMonthlyCost(): BigDecimal</FONT></TD></TR></TABLE>>];
+}
+subgraph cluster_cross { label="SERVIÇOS COMPARTILHADOS E SINGLETONS"; labelloc="t"; color="#e0b77a"; style="rounded"; fontname="Arial"; fontsize=13;
+AppConfig [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fef3c7" ALIGN="CENTER" CELLPADDING="7"><B>AppConfig</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Singleton»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- INSTANCE: AppConfig<BR ALIGN="LEFT"/>- region: String<BR ALIGN="LEFT"/>- monthlyBudget: BigDecimal <BR ALIGN="LEFT"/> + getInstance(): AppConfig<BR ALIGN="LEFT"/>+ getRegion(): String<BR ALIGN="LEFT"/>+ getMonthlyBudget(): BigDecimal</FONT></TD></TR></TABLE>>];
+AuditLog [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fef3c7" ALIGN="CENTER" CELLPADDING="7"><B>AuditLog</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Thread-safe Singleton»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- INSTANCE: AuditLog<BR ALIGN="LEFT"/>- records: List&lt;AuditRecord&gt;<BR ALIGN="LEFT"/>- nextSequence: long <BR ALIGN="LEFT"/> + getInstance(): AuditLog<BR ALIGN="LEFT"/>+ register(...): void<BR ALIGN="LEFT"/>+ getRecords(): List&lt;AuditRecord&gt;<BR ALIGN="LEFT"/>+ printHistory(): void</FONT></TD></TR></TABLE>>];
+AuditRecord [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>AuditRecord</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Entity»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- sequence: long<BR ALIGN="LEFT"/>- timestamp: LocalDateTime<BR ALIGN="LEFT"/>- environmentName: String<BR ALIGN="LEFT"/>- provider: Provider<BR ALIGN="LEFT"/>- result: String <BR ALIGN="LEFT"/> + toString(): String</FONT></TD></TR></TABLE>>];
+Provider [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>Provider</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Value Object»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">- name: String<BR ALIGN="LEFT"/>- displayName: String <BR ALIGN="LEFT"/> + equals(other): boolean<BR ALIGN="LEFT"/>+ getDisplayName(): String</FONT></TD></TR></TABLE>>];
+Money [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="2"><TR><TD BGCOLOR="#fffbeb" ALIGN="CENTER" CELLPADDING="7"><B>Money</B><BR/><FONT POINT-SIZE="9" COLOR="#43536b">«Utility»</FONT></TD></TR><TR><TD ALIGN="LEFT" CELLPADDING="6"><FONT POINT-SIZE="9">+ format(value): String</FONT></TD></TR></TABLE>>];
+}
+
+      Main -> ProvisioningRequest [label="cria"];
+      Main -> ProviderFactorySelector [label="seleciona"];
+      Main -> EnvironmentProvisioner [label="executa"];
+      ProvisioningRequest -> Provider [label="informa"];
+      ProviderFactorySelector -> Provider [label="seleciona por"];
+      ProviderFactorySelector -> AwsResourceFactory [label="instancia / reutiliza"];
+      ProviderFactorySelector -> AzureResourceFactory;
+      AwsResourceFactory -> CloudResourceFactory [arrowhead=empty, style=dashed, label="implementa"];
+      AzureResourceFactory -> CloudResourceFactory [arrowhead=empty, style=dashed];
+      EnvironmentProvisioner -> CloudResourceFactory [label="recebe fábrica"];
+      EnvironmentProvisioner -> ProvisioningRequest [label="valida"];
+      EnvironmentProvisioner -> Environment [label="monta"];
+      EnvironmentProvisioner -> AppConfig [label="consulta orçamento"];
+      EnvironmentProvisioner -> AuditLog [label="registra ACEITO/RECUSADO"];
+      Environment -> VirtualMachine [dir=both, arrowtail=odiamond, arrowhead=none, label="0..* máquinas"];
+      Environment -> ObjectStorage [dir=both, arrowtail=odiamond, arrowhead=none, label="1 armazenamento"];
+      Environment -> MessageQueue [dir=both, arrowtail=odiamond, arrowhead=none, label="1 fila"];
+      AwsVirtualMachine -> VirtualMachine [arrowhead=empty, style=dashed];
+      AwsObjectStorage -> ObjectStorage [arrowhead=empty, style=dashed];
+      AwsMessageQueue -> MessageQueue [arrowhead=empty, style=dashed];
+      AzureVirtualMachine -> VirtualMachine [arrowhead=empty, style=dashed];
+      AzureObjectStorage -> ObjectStorage [arrowhead=empty, style=dashed];
+      AzureMessageQueue -> MessageQueue [arrowhead=empty, style=dashed];
+      AwsResourceFactory -> AwsVirtualMachine [label="cria"];
+      AwsResourceFactory -> AwsObjectStorage [label="cria"];
+      AwsResourceFactory -> AwsMessageQueue [label="cria"];
+      AzureResourceFactory -> AzureVirtualMachine [label="cria"];
+      AzureResourceFactory -> AzureObjectStorage [label="cria"];
+      AzureResourceFactory -> AzureMessageQueue [label="cria"];
+      Environment -> AppConfig [label="obtém região"];
+      Environment -> Money [label="formata custo"];
+      AuditLog -> AuditRecord [dir=both, arrowtail=odiamond, arrowhead=none, label="histórico"];
+      AuditLog -> Provider;
+      AppConfig -> configFile [style=dotted, label="lê uma vez"];
+      configFile [shape=note, style=filled, fillcolor="#f8fafc", color="#94a3b8", label="config.properties\nregiao\norcamento.mensal.maximo", fontname="Arial", fontsize=9];
+      note [shape=note, style=filled, fillcolor="#f8fafc", color="#94a3b8", label="Abstract Factory: mantém VM, armazenamento e fila na mesma família de provedor.\nSingletons: configuração carregada uma vez e auditoria compartilhada com operações sincronizadas.\nEnvironment também valida que os recursos recebidos pertencem ao mesmo Provider.", fontsize=9, fontname="Arial"];
+      Environment -> note [style=invis];
+    }
+    

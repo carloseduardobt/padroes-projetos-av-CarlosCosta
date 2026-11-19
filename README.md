@@ -90,3 +90,7 @@ padroes-projetos-av-estudante/
 3. Crie o repositorio publico no GitHub ou GitLab e envie os commits locais (`git push`). O professor considera somente commits enviados ao repositorio remoto.
 
 Os commits deste projeto usam os prefixos solicitados: `q1:` e `q2:`.
+
+## Diagramas UML
+
+Os diagramas de classes estão em cada pasta `questaoX/diagrama/` nos formatos PNG (pronto para visualização), SVG (vetorial) e PlantUML (`.puml`, editável como código).
